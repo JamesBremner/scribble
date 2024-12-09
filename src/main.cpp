@@ -25,6 +25,7 @@ public:
                     if (!fdrawing)
                         return;
                     fdrawing = false;
+                    box();
                 }
                 else
                 {
@@ -41,6 +42,8 @@ public:
 private:
     bool fdrawing;
     std::vector<cxy> myTrace;
+    cxy topleft;
+    cxy wh;
 
     void draw(wex::shapes &S)
     {
@@ -53,7 +56,43 @@ private:
             S.color(0x0000FF);
             for (int k = 1; k < myTrace.size(); k++)
                 S.line(myTrace[k - 1], myTrace[k]);
+            S.fill(false);
+            S.color(0xFF0000);
+            S.rectangle({(int)topleft.x,(int)topleft.y,(int)wh.x,(int)wh.y});
         }
+    }
+
+    void box()
+    {
+
+        topleft = myTrace[0];
+        for (auto &p : myTrace)
+        {
+            if (p.x < topleft.x)
+                topleft.x = p.x;
+            if (p.y < topleft.y)
+                topleft.y = p.y;
+        }
+
+        wh = cxy(0,0);
+        for (auto &p : myTrace)
+        {
+            if (p.x - topleft.x > wh.x)
+                wh.x = p.x - topleft.x;
+            if (p.y - topleft.y > wh.y)
+                wh.y = p.y - topleft.y;
+        }
+        // std::vector<double> ret;
+        // double xscale = 400 / wh.x;
+        // double yscale = 400 / wh.y;
+        // if (yscale < xscale)
+        //     ret.push_back(yscale);
+        // else
+        //     ret.push_back(xscale);
+        // ret.push_back(topleft.x);
+        // ret.push_back(topleft.y);
+
+
     }
 };
 
